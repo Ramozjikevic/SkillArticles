@@ -60,6 +60,8 @@ class RootActivity : AppCompatActivity() {
             }
         })
 
+        if (isSearch) searchItem?.expandActionView()
+
         val searchView = searchItem?.actionView as SearchView
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -74,11 +76,7 @@ class RootActivity : AppCompatActivity() {
             }
         })
 
-        if (isSearch) {
-            searchItem.expandActionView()
-            searchView.setQuery(queryString ?: "",true)
-            searchView.clearFocus()
-        }
+        searchView.setQuery(queryString, false)
 
         return super.onCreateOptionsMenu(menu)
     }
