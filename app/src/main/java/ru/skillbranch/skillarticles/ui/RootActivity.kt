@@ -2,8 +2,11 @@ package ru.skillbranch.skillarticles.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
@@ -18,6 +21,9 @@ import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
+
+    private var isSearch : Boolean = false
+    private var queryString : String? = null
 
     private lateinit var viewModel: ArticleViewModel
 
@@ -37,6 +43,43 @@ class RootActivity : AppCompatActivity() {
         viewModel.observeNotifications(this) {
             renderNotification(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                viewModel.handleSearchMode(false)
+                return true
+            }
+        })
+
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(text: String?): Boolean {
+                viewModel.handleIsSearch(text)
+                return true
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                viewModel.handleIsSearch(text)
+                return true
+            }
+        })
+
+        if (isSearch) {
+            searchItem.expandActionView()
+            searchView.setQuery(queryString ?: "",true)
+        }
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun renderNotification(notify: Notify) {
@@ -105,6 +148,8 @@ class RootActivity : AppCompatActivity() {
         toolbar.subtitle = data.category ?: "loading"
         if(data.categoryIcon != null) toolbar.logo = getDrawable(data.categoryIcon as Int)
 
+        isSearch = data.isSearch
+        queryString = data.searchQuery
     }
 
     private fun setupToolbar() {

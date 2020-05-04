@@ -10,6 +10,7 @@ import ru.skillbranch.skillarticles.extensions.format
 
 class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
+    private val menuIsShow: Boolean = false
 
     init {
         subscribeOnDataSource(getArticleData()){ article, state ->
@@ -114,13 +115,12 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-
+        updateState { it.copy(isSearch = isSearch) }
     }
 
-    override fun handleSearch(query: String?) {
-
+    override fun handleIsSearch(query: String?) {
+        updateState { it.copy(searchQuery = query) }
     }
-
 }
 
 data class ArticleState(
