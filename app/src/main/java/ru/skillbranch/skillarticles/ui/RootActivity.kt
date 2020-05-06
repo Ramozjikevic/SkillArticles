@@ -56,6 +56,7 @@ class RootActivity : AppCompatActivity() {
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 viewModel.handleSearchMode(false)
+                invalidateOptionsMenu()
                 return true
             }
         })
