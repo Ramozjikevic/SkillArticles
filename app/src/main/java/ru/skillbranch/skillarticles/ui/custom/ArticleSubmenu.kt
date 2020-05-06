@@ -12,7 +12,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.behaviors.SubmenuBehavior
+import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import ru.skillbranch.skillarticles.extensions.dpToPx
 import kotlin.math.hypot
 
