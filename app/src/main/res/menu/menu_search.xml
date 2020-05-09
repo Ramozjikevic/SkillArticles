@@ -6,7 +6,7 @@
         android:title="Поиск"
         android:icon="@drawable/ic_search_black_24dp"
         app:actionLayout="@layout/search_view_layout"
-        app:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="always|collapseActionView"
         />
 
 </menu>
