@@ -1,5 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
+import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
@@ -7,10 +9,13 @@ import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
-class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
+class ArticleViewModel(private val articleId: String) :
+    BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
-    private val menuIsShow: Boolean = false
 
     init {
         subscribeOnDataSource(getArticleData()){ article, state ->
@@ -115,19 +120,22 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        updateState { it.copy(isSearch = isSearch) }
+        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
     }
 
-    override fun handleIsSearch(query: String?) {
-        updateState { it.copy(searchQuery = query) }
+    override fun handleSearch(query: String?) {
+        query ?: return
+        val result = (currentState.content.firstOrNull() as? String) // index
+            //.map { it to it + query.length }
+        updateState { it.copy(searchQuery = query, searchResults = listOf(1 to 2)) }
     }
 
     fun handleUpResult() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        updateState {  it.copy(searchPosition = it.searchPosition.dec())}
     }
 
     fun handleDownResult() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 
 }
@@ -154,4 +162,24 @@ data class ArticleState(
     val poster: String? = null, // обложка статьи
     val content: List<Any> = emptyList(), // контент
     val reviews: List<Any> = emptyList() // комментарии
-)
+) : IViewModelState {
+    override fun save(outState: Bundle) {
+       outState.putAll(
+           bundleOf(
+               "isSearch" to isSearch,
+               "searchQuery" to searchQuery,
+               "searchResults" to searchResults,
+               "searchPosition" to searchPosition
+           )
+       )
+    }
+
+    override fun restore(savedState: Bundle): ArticleState {
+        return copy(
+            isSearch = savedState["isSearch"] as Boolean,
+            searchQuery = savedState["searchQuery"] as? String,
+            searchResults = savedState["searchResults"] as List<Pair<Int,Int>>,
+            searchPosition = savedState["searchPosition"] as Int
+        )
+    }
+}
