@@ -83,9 +83,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val spans = content.getSpans<SearchSpan>()
         content.getSpans<SearchFocusSpan>().forEach { content.removeSpan(it) }
 
-        if (spans.isNotEmpty()){
+        if (spans.isNotEmpty()) {
             val result = spans[searchPosition]
-            Selection.setSelection(content, content.getSpanStart(result) )
+            Selection.setSelection(content, content.getSpanStart(result))
             content.setSpan(
                 SearchFocusSpan(bgColor, fgColor),
                 content.getSpanStart(result),
@@ -108,7 +108,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun hideSearchBar() {
         bottombar.setSearchState(false)
-        scroll.setMarginOptionally(bottom = dpToIntPx(56))
+        scroll.setMarginOptionally(bottom = dpToIntPx(0))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -121,7 +121,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             searchItem?.expandActionView()
             searchView?.setQuery(binding.searchQuery, false)
 
-            if(binding.isFocusedSearch) searchView?.requestFocus()
+            if (binding.isFocusedSearch) searchView?.requestFocus()
             else searchView?.clearFocus()
         }
 
@@ -224,25 +224,25 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     inner class ArticleBinding : Binding() {
 
-        var isFocusedSearch:Boolean = false
+        var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
 
         private var isLoadingContent by ObserveProp(true)
 
-        private var isLike: Boolean by RenderProp(false) {btn_like.isChecked = it}
-        private var isBookmark: Boolean by RenderProp(false) {btn_bookmark.isChecked = it}
+        private var isLike: Boolean by RenderProp(false) { btn_like.isChecked = it }
+        private var isBookmark: Boolean by RenderProp(false) { btn_bookmark.isChecked = it }
         private var isShowMenu: Boolean by RenderProp(false) {
             btn_settings.isChecked = it
             if (it) submenu.open() else submenu.close()
         }
 
-        private var title: String by RenderProp("loading") {toolbar.title = it}
-        private var category: String by RenderProp("loading") {toolbar.subtitle = it}
+        private var title: String by RenderProp("loading") { toolbar.title = it }
+        private var category: String by RenderProp("loading") { toolbar.subtitle = it }
         private var categoryIcon: Int by RenderProp(R.drawable.logo_placeholder) {
             toolbar.logo = getDrawable(it)
         }
 
-        private var isBigText:Boolean by RenderProp(false) {
+        private var isBigText: Boolean by RenderProp(false) {
             if (it) {
                 tv_text_content.textSize = 18f
                 btn_text_up.isChecked = true
@@ -254,7 +254,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             }
         }
 
-        private var isDarkMode : Boolean by RenderProp(false, false){
+        private var isDarkMode: Boolean by RenderProp(false, false) {
             switch_mode.isChecked = it
             delegate.localNightMode = if (it) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
@@ -278,12 +278,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 ::isSearch,
                 ::searcResults,
                 ::searchPosition
-            ){ ilc, iss, sr ,sp ->
-                if(!ilc && iss){
+            ) { ilc, iss, sr, sp ->
+                if (!ilc && iss) {
                     renderSearchResult(sr)
                     renderSearchPosition(sp)
                 }
-                if(!ilc && !iss) {
+                if (!ilc && !iss) {
                     clearSearchResult()
                 }
 
@@ -292,7 +292,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
 
         override fun bind(data: IViewModelState) {
-           data as ArticleState
+            data as ArticleState
 
             isLike = data.isLike
             isBookmark = data.isBookmark
@@ -300,10 +300,10 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             isBigText = data.isBigText
             isDarkMode = data.isDarkMode
 
-            if(data.title != null) title = data.title
-            if(data.category != null) category = data.category
-            if(data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
-            if(data.content.isNotEmpty()) content = data.content.first() as String
+            if (data.title != null) title = data.title
+            if (data.category != null) category = data.category
+            if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
+            if (data.content.isNotEmpty()) content = data.content.first() as String
 
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
