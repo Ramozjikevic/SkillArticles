@@ -1,9 +1,8 @@
-package ru.skillbranch.skillarticles.viewmodels
+package ru.skillbranch.skillarticles.viewmodels.base
 
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
