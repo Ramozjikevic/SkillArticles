@@ -73,8 +73,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-
-        renderSearchPosition(0)
     }
 
     override fun renderSearchPosition(searchPosition: Int) {
@@ -199,11 +197,13 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
         btn_result_down.setOnClickListener {
             if (search_view.hasFocus()) search_view.clearFocus()
+            if(!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             viewModel.handleDownResult()
         }
 
         btn_search_close.setOnClickListener {
             viewModel.handleSearchMode(false)
+            if(!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             invalidateOptionsMenu()
         }
     }
@@ -303,7 +303,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             if (data.title != null) title = data.title
             if (data.category != null) category = data.category
             if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
-            if (data.content.isNotEmpty()) content = data.content.first() as String
+            if (data.content != null) content = data.content
 
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
