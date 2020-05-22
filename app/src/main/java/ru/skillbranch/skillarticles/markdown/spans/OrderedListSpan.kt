@@ -34,7 +34,7 @@ class OrderedListSpan(
         if (isFirstLine) {
             paint.withCustomColor {
                 canvas.drawText(
-                    "$order.",
+                    order,
                     gapWidth + currentMarginLocation.toFloat(),
                     lineBaseline.toFloat(),
                     paint

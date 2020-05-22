@@ -131,7 +131,6 @@ object MarkdownParser {
             }
         }
 
-        // check if there's any more text left
         if (lastStartIndex < string.length) {
             clearString += string.substring(lastStartIndex, string.length)
         }
@@ -260,7 +259,7 @@ object MarkdownParser {
                     val order = string.subSequence(startIndex.plus(0),startIndex.plus(1)).toString()
                     text = string.subSequence(startIndex.plus(3), endIndex)
                     val subs = findElements(text)
-                    val element = Element.OrderedListItem(order, text, subs)
+                    val element = Element.OrderedListItem("$order.", text, subs)
                     parents.add(element)
 
                     lastStartIndex = endIndex
