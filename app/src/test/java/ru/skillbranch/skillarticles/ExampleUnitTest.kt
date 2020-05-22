@@ -76,10 +76,6 @@ class ExampleUnitTest {
         val result = MarkdownParser.parse(ruleString)
         val actual = prepare<Element.Rule>(result.elements)
         assertEquals(3, actual.size)
-
-        printResults(actual)
-        println("")
-        printElements(result.elements)
     }
 
     @Test
@@ -122,7 +118,7 @@ class ExampleUnitTest {
         assertEquals(expectedMarkdown["quote"], actualQuotes)
         assertEquals(expectedMarkdown["italic"], actualItalic)
         assertEquals(expectedMarkdown["bold"], actualBold)
-        //assertEquals(expectedMarkdown["strike"], actualStrike)
+        assertEquals(expectedMarkdown["strike"], actualStrike)
         assertEquals(3, actualRule.size)
         assertEquals(expectedMarkdown["inline"], actualInline)
         assertEquals(expectedMarkdown["linkTitles"], actualLinkTitles)
@@ -136,7 +132,6 @@ class ExampleUnitTest {
     }
 
     //optionally (delete @Ignore fo run)
-    @Ignore
     @Test
     fun clear_all_with_optionally() {
         val result = MarkdownParser.clear(markdownString)
@@ -144,7 +139,6 @@ class ExampleUnitTest {
     }
 
     //optionally (delete @Ignore fo run)
-    @Ignore
     @Test
     fun parse_all_with_optionally() {
         val result = MarkdownParser.parse(markdownString)
@@ -160,8 +154,8 @@ class ExampleUnitTest {
         val actualLinks = result.elements.spread()
             .filterIsInstance<Element.Link>()
             .map { it.link }
-        //val actualBlockCode = prepare<Element.BlockCode>(result.elements) //optionally
-        //val actualOrderedList = prepare<Element.OrderedListItem>(result.elements) //optionally
+        val actualBlockCode = prepare<Element.BlockCode>(result.elements) //optionally
+        val actualOrderedList = prepare<Element.OrderedListItem>(result.elements) //optionally
 
         assertEquals(expectedMarkdown["unorderedList"], actualUnorderedList)
         assertEquals(expectedMarkdown["header"], actualHeaders)
@@ -173,8 +167,8 @@ class ExampleUnitTest {
         assertEquals(expectedMarkdown["inline"], actualInline)
         assertEquals(expectedMarkdown["linkTitles"], actualLinkTitles)
         assertEquals(expectedMarkdown["links"], actualLinks)
-        //assertEquals(expectedMarkdown["multiline"], actualBlockCode) //optionally
-        //assertEquals(expectedMarkdown["orderedList"], actualOrderedList) //optionally
+        assertEquals(expectedMarkdown["multiline"], actualBlockCode) //optionally
+        assertEquals(expectedMarkdown["orderedList"], actualOrderedList) //optionally
     }
 
     private fun printResults(list:List<String>){
