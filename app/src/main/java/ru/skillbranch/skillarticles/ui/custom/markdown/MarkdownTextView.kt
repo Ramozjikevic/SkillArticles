@@ -11,7 +11,7 @@ import androidx.core.graphics.withTranslation
 @SuppressLint("AppCompatCustomView")
 class MarkdownTextView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
+    attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
 
