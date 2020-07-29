@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
