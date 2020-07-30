@@ -3,7 +3,7 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
+import android.graphics.Rect
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.graphics.withTranslation
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
+import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
 @SuppressLint("AppCompatCustomView")
 class MarkdownTextView constructor(
@@ -26,10 +27,14 @@ class MarkdownTextView constructor(
     override val spannableContent: Spannable
         get() = text as Spannable
 
-    val color = context.attrValue(R.attr.colorOnBackground)
+    private val color = context.attrValue(R.attr.colorOnBackground)
+    private val focusRect = Rect()
 
-    private val searchBgHelper = SearchBgHelper(context) {
-
+    private val searchBgHelper = SearchBgHelper(context) { top, bottom ->
+        focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
+        // Запрашивает определенный квадрат для текущей view, на которой вызываеться
+        // Второй аргумент моментально получить фокус или с анимацией
+        requestRectangleOnScreen(focusRect, false)
     }
 
     init {
@@ -42,7 +47,7 @@ class MarkdownTextView constructor(
     override fun onDraw(canvas: Canvas) {
         if (text is Spanned && layout != null) {
             //Фунция по смещает канву отрисовывает и возвращает в исходную точку
-            canvas.withTranslation(totalPaddingLeft.toFloat(), totalPaddingRight.toFloat()) {
+            canvas.withTranslation(totalPaddingLeft.toFloat(), totalPaddingTop.toFloat()) {
                 searchBgHelper.draw(canvas, text as Spanned, layout)
             }
         }
