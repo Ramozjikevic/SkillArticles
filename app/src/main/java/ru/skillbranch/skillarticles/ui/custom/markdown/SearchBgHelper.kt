@@ -17,8 +17,16 @@ import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 
 class SearchBgHelper(
     context: Context,
-    private val focusListener: (Int, Int) -> Unit
+    private val focusListener: ((Int, Int) -> Unit)? = null,
+    mockDrawable: Drawable? = null
 ) {
+
+    constructor(context: Context, focusListener: ((Int, Int) -> Unit)?): this (
+        context,
+        focusListener,
+        null
+    )
+
     private val padding: Int = context.dpToIntPx(4)
     private val borderWidth: Int = context.dpToIntPx(1)
     private val radius: Float = context.dpToPx(8)
@@ -27,7 +35,7 @@ class SearchBgHelper(
     private val alphaColor: Int = ColorUtils.setAlphaComponent(secondaryColor, 160)
 
     val drawable: Drawable by lazy {
-        GradientDrawable().apply {
+        mockDrawable ?: GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadii = FloatArray(8).apply { fill(radius, 0, size) }
             color = ColorStateList.valueOf(alphaColor)
@@ -35,8 +43,8 @@ class SearchBgHelper(
         }
     }
 
-    val drawableLeft: Drawable by lazy {
-        GradientDrawable().apply {
+    private val drawableLeft: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadii = floatArrayOf(
                 radius, radius,
@@ -49,16 +57,16 @@ class SearchBgHelper(
         }
     }
 
-    val drawableMiddle: Drawable by lazy {
-        GradientDrawable().apply {
+    private val drawableMiddle: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             color = ColorStateList.valueOf(alphaColor)
             setStroke(borderWidth, secondaryColor)
         }
     }
 
-    val drawableRight: Drawable by lazy {
-        GradientDrawable().apply {
+    private val drawableRight: Drawable by lazy {
+        mockDrawable ?: GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadii = floatArrayOf(
                 0f, 0f,
@@ -109,7 +117,7 @@ class SearchBgHelper(
             endLine = layout.getLineForOffset(spanEnd)
 
             if(it is SearchFocusSpan) {
-                focusListener.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
+                focusListener?.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
             }
 
             headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)

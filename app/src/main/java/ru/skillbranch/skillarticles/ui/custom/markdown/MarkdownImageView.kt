@@ -83,7 +83,7 @@ class MarkdownImageView private constructor(
     }
 
     init {
-        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
             //Используеться для скругления углов
             outlineProvider = object : ViewOutlineProvider() {

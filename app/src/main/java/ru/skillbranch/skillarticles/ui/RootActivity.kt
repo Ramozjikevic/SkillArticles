@@ -144,17 +144,17 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         btn_result_up.setOnClickListener {
             if (search_view.hasFocus()) search_view.clearFocus()
+            hideKeyBoard(btn_result_up)
             viewModel.handleUpResult()
         }
         btn_result_down.setOnClickListener {
             if(!tv_text_content.hasFocus()) tv_text_content.requestFocus()
-            hideKeyBoard(btn_result_up)
+            hideKeyBoard(btn_result_down)
             viewModel.handleDownResult()
         }
 
         btn_search_close.setOnClickListener {
             viewModel.handleSearchMode(false)
-            hideKeyBoard(btn_result_down)
             invalidateOptionsMenu()
         }
     }
@@ -293,6 +293,5 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         override fun restoreUi(savedState: Bundle) {
             isFocusedSearch = savedState.getBoolean(::isFocusedSearch.name)
         }
-
     }
 }

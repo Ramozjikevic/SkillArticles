@@ -12,7 +12,6 @@ import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.repositories.Element
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
-import ru.skillbranch.skillarticles.data.repositories.MarkdownParser
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.ui.custom.spans.*
@@ -62,7 +61,6 @@ class MarkdownBuilder(context: Context) {
                         }
                     }
                 }
-
                 is Element.Header -> {
                     inSpans(
                         HeaderSpan(
@@ -76,7 +74,6 @@ class MarkdownBuilder(context: Context) {
                         append(element.text)
                     }
                 }
-
                 is Element.Italic -> {
                     inSpans(StyleSpan(Typeface.ITALIC)) {
                         for (child in element.elements) {
@@ -84,7 +81,6 @@ class MarkdownBuilder(context: Context) {
                         }
                     }
                 }
-
                 is Element.Bold -> {
                     inSpans(StyleSpan(Typeface.BOLD)) {
                         for (child in element.elements) {
@@ -92,7 +88,6 @@ class MarkdownBuilder(context: Context) {
                         }
                     }
                 }
-
                 is Element.Strike -> {
                     inSpans(StrikethroughSpan()) {
                         for (child in element.elements) {
@@ -100,13 +95,11 @@ class MarkdownBuilder(context: Context) {
                         }
                     }
                 }
-
                 is Element.Rule -> {
                     inSpans(HorizontalRuleSpan(ruleWidth, colorDivider)) {
                         append(element.text)
                     }
                 }
-
                 is Element.InlineCode -> {
                     inSpans(
                         InlineCodeSpan(
@@ -119,16 +112,13 @@ class MarkdownBuilder(context: Context) {
                         append(element.text)
                     }
                 }
-
-                is Element.Link -> {
+                is Element.Link ->
                     inSpans(
                         IconLinkSpan(linkIcon, gap, colorPrimary, strikeWidth),
                         URLSpan(element.link)
                     ) {
                         append(element.text)
                     }
-                }
-
                 is Element.OrderedListItem -> {
                     inSpans(OrderedListSpan(gap, element.order, colorOnSurface)) {
                         for (child in element.elements) {
@@ -139,6 +129,5 @@ class MarkdownBuilder(context: Context) {
             }
         }
     }
-
 }
 

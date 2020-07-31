@@ -122,9 +122,7 @@ class MarkdownCodeView private constructor(
         iv_switch = ImageView(context).apply {
             setImageResource(R.drawable.ic_brightness_medium_black_24dp)
             imageTintList = ColorStateList.valueOf(textColor)
-            setOnClickListener {
-                copyListener?.invoke(codeString.toString())
-            }
+            setOnClickListener {toggleColors()}
         }
         addView(iv_switch)
     }
