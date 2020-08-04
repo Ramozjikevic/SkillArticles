@@ -3,8 +3,9 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -81,6 +82,8 @@ class MarkdownImageView private constructor(
         color = lineColor
         strokeWidth = 0f
     }
+
+    private var aspectRatio = 0f
 
     init {
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
@@ -224,6 +227,21 @@ class MarkdownImageView private constructor(
         )
     }
 
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsOpen  = tv_alt?.isVisible ?: false
+        savedState.ssAspectRatio = (iv_image.width.toFloat() / iv_image.height)
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        super.onRestoreInstanceState(state)
+        if( state is SavedState) {
+            tv_alt?.isVisible = state.ssIsOpen
+            aspectRatio = state.ssAspectRatio
+        }
+    }
+
     private fun animateShowAlt() {
         tv_alt?.isVisible = true
         val endRadius = hypot(tv_alt?.width?.toFloat() ?: 0f, tv_alt?.height?.toFloat() ?: 0f)
@@ -251,7 +269,32 @@ class MarkdownImageView private constructor(
     }
 }
 
-class AspectRatioResizeTransform : BitmapTransformation() {
+private class SavedState : View.BaseSavedState, Parcelable {
+    var ssIsOpen: Boolean = false
+    var ssAspectRatio: Float = 0f
+
+    constructor(superState: Parcelable?) : super(superState)
+
+    constructor(src: Parcel) : super(src) {
+        ssIsOpen = src.readInt() == 1
+        ssAspectRatio = src.readFloat()
+    }
+
+    override fun writeToParcel(out: Parcel, flags: Int) {
+        super.writeToParcel(out, flags)
+        out.writeInt(if (ssIsOpen) 1 else 0)
+        out.writeFloat(ssAspectRatio)
+    }
+
+    override fun describeContents() = 0
+
+    companion object CREATOR : Parcelable.Creator<SavedState> {
+        override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+        override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+    }
+}
+
+class AspectRatioResizeTransform() : BitmapTransformation() {
     private val ID =
         "ru.skillbranch.skillarticles.glide.AspectRatioResizeTransform" //any unique string
     private val ID_BYTES = ID.toByteArray(Charset.forName("UTF-8"))
