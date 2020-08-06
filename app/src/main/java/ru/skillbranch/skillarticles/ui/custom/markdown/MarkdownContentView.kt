@@ -87,10 +87,20 @@ class MarkdownContentView @JvmOverloads constructor(
     override fun onRestoreInstanceState(state: Parcelable?) {
         super.onRestoreInstanceState(state)
         if(state is SavedState) layoutManager = state.layout
+
+        children.filter { it !is MarkdownTextView }
+            .forEachIndexed { index, it ->
+                layoutManager.attachToParent(it,index)
+            }
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>?) {
         super.dispatchSaveInstanceState(container)
+        children.filter { it !is MarkdownTextView }
+            .forEachIndexed { index, it ->
+                layoutManager.attachToParent(it,index)
+            }
+
         children.filter { it !is MarkdownTextView }
             .forEach {
                 // saveHierarchyState - сохраняет состояние View в контаинер
@@ -130,7 +140,7 @@ class MarkdownContentView @JvmOverloads constructor(
                         it.image.text,
                         it.image.alt
                     )
-                    iv.id = index++
+                    //iv.id = index++
                     addView(iv)
                   /*  layoutManager.attachToParent(iv, index)
                     index ++*/
@@ -142,8 +152,8 @@ class MarkdownContentView @JvmOverloads constructor(
                         textSize,
                         it.blockCode.text
                     )
-                    index ++
-                    sv.id = index++
+                    //index ++
+                    //sv.id = index++
                     addView(sv)
                     /*layoutManager.attachToParent(sv, index)*/
                 }
