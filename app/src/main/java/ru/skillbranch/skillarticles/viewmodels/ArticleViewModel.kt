@@ -1,8 +1,8 @@
 package ru.skillbranch.skillarticles.viewmodels
 
-import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
@@ -16,13 +16,16 @@ import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
-class ArticleViewModel(private val articleId: String) :
-    BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
+class ArticleViewModel(
+    handle: SavedStateHandle,
+    private val articleId: String
+) :
+    BaseViewModel<ArticleState>(handle, ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
-    private var clearContent:String? = null
+    private var clearContent: String? = null
 
     init {
-        subscribeOnDataSource(getArticleData()){ article, state ->
+        subscribeOnDataSource(getArticleData()) { article, state ->
             article ?: return@subscribeOnDataSource null
             state.copy(
                 shareLink = article.shareLink,
@@ -64,12 +67,12 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     //load data from db
-    override fun getArticleData() : LiveData<ArticleData?> {
+    override fun getArticleData(): LiveData<ArticleData?> {
         return repository.getArticle(articleId)
     }
 
     //load data from db
-    override fun getArticlePersonalInfo() : LiveData<ArticlePersonalInfo?> {
+    override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
         return repository.loadArticlePersonalInfo(articleId)
     }
 
@@ -96,7 +99,7 @@ class ArticleViewModel(private val articleId: String) :
 
         toggleLike()
         val msg = if (!isLike) Notify.TextMessage("Mark is liked")
-        else{
+        else {
             Notify.ActionMessage(
                 "Don`t like it anymore",
                 "No, still like it",
@@ -129,7 +132,8 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleSearch(query: String?) {
         query ?: return
-        if (clearContent == null && currentState.content.isNotEmpty()) clearContent = currentState.content.clearContent()
+        if (clearContent == null && currentState.content.isNotEmpty()) clearContent =
+            currentState.content.clearContent()
         val result = clearContent
             .indexesOf(query)
             .map { it to it + query.length }
@@ -137,7 +141,7 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     fun handleUpResult() {
-        updateState {  it.copy(searchPosition = it.searchPosition.dec())}
+        updateState { it.copy(searchPosition = it.searchPosition.dec()) }
     }
 
     fun handleDownResult() {
@@ -172,23 +176,19 @@ data class ArticleState(
     val content: List<MarkdownElement> = emptyList(), // контент
     val reviews: List<Any> = emptyList() // комментарии
 ) : IViewModelState {
-    override fun save(outState: Bundle) {
-       outState.putAll(
-           bundleOf(
-               "isSearch" to isSearch,
-               "searchQuery" to searchQuery,
-               "searchResults" to searchResults,
-               "searchPosition" to searchPosition
-           )
-       )
+    override fun save(outState: SavedStateHandle) {
+        outState.set("isSearch", isSearch)
+        outState.set("searchQuery", searchQuery)
+        outState.set("searchResults", searchResults)
+        outState.set("searchPosition", searchPosition)
     }
 
-    override fun restore(savedState: Bundle): ArticleState {
+    override fun restore(savedState: SavedStateHandle): ArticleState {
         return copy(
-            isSearch = savedState["isSearch"] as Boolean,
-            searchQuery = savedState["searchQuery"] as? String,
-            searchResults = savedState["searchResults"] as List<Pair<Int,Int>>,
-            searchPosition = savedState["searchPosition"] as Int
+            isSearch = savedState["isSearch"] ?: false,
+            searchQuery = savedState["searchQuery"],
+            searchResults = savedState["searchResults"] ?: emptyList(),
+            searchPosition = savedState["searchPosition"] ?: 0
         )
     }
 }
