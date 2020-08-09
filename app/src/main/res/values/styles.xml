@@ -24,7 +24,6 @@
         <item name="colorSurface">@color/color_surface</item>
         <item name="colorOnSurface">@color/color_on_surface</item>
         <item name="colorOnBackground">@color/color_gray</item>
-
         <item name="snackbarStyle">@style/CustomSnackbar</item>
 
         <item name="darkSurfaceColor"  >#272727</item>
@@ -64,6 +63,23 @@
 
     <style name="CustomSnackbar" parent="Widget.MaterialComponents.Snackbar">
         <item name="layout_insetEdge">bottom</item>
+    </style>
+    
+    <style name="TextInputLayoutAppearance" parent="Widget.Design.TextInputLayout">
+        <item name="colorControlNormal">@color/color_gray</item>
+        <item name="colorControlActivated">@color/color_accent</item>
+        <item name="colorControlHighlight">@color/color_gray</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="NavBarTheme" parent="AppTheme">
+        <item name="colorSurface">@color/color_article_bar</item>
+        <item name="colorOnPrimary">@color/color_primary</item>
+    </style>
+
+    <style name="NavBarStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemTextColor">@color/tint_color</item>
+        <item name="itemIconTint">@color/tint_color</item>
     </style>
 
 </resources>
