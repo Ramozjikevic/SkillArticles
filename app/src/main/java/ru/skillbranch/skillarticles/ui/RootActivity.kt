@@ -7,6 +7,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
+import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
@@ -33,9 +34,12 @@ class RootActivity : BaseActivity<RootViewModel>() {
     }
 
     override fun renderNotification(notify: Notify) {
-        val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
+        val snackbar = Snackbar.make(container, notify.message, Snackbar.LENGTH_LONG)
+        if (bottombar!=null) snackbar.anchorView = bottombar
+        else snackbar.anchorView = nav_view
+
            // .setAnchorView(bottombar)
-            .setActionTextColor(getColor(R.color.color_accent_dark))
+           // .setActionTextColor(getColor(R.color.color_accent_dark))
 
         when (notify) {
             is Notify.TextMessage -> {
