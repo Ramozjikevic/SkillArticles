@@ -66,7 +66,7 @@
         <fragment
             android:id="@+id/nav_auth"
             android:name="ru.skillbranch.skillarticles.ui.auth.AuthFragment"
-            android:label="fragment_auth"
+            android:label="@string/title_authorization"
             tools:layout="@layout/fragment_auth" >
             <action
                 android:id="@+id/action_nav_auth_to_page_privacy_policy"

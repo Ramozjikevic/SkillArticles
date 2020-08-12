@@ -3,11 +3,13 @@ package ru.skillbranch.skillarticles.ui.auth
 import android.text.Spannable
 import androidx.core.text.set
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_auth.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
+import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
 import ru.skillbranch.skillarticles.ui.custom.spans.UnderlineSpan
 import ru.skillbranch.skillarticles.viewmodels.auth.AuthViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
@@ -16,6 +18,11 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
     override val viewModel: AuthViewModel by viewModels()
     override val layout: Int = R.layout.fragment_auth
     private val args: AuthFragmentArgs by navArgs()
+
+    override val prepareToolbar: (ToolbarBuilder.() -> Unit) = {
+        setTitle(findNavController().currentDestination?.label.toString())
+    }
+
 
     override fun setupViews() {
         tv_privacy.setOnClickListener {
@@ -28,6 +35,7 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
                 if (args.privateDestination == -1) null else args.privateDestination
             )
         }
+
 
         val color = root.attrValue(R.attr.colorPrimary)
         (tv_access_code.text as Spannable).let { it[0..it.length] = UnderlineSpan(color) }
