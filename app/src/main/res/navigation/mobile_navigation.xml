@@ -59,4 +59,38 @@
         android:name="ru.skillbranch.skillarticles.ui.transcriptions.TranscriptionsFragment"
         android:label="@string/title_transcriptions"
         tools:layout="@layout/fragment_transcriptions" />
+
+    <navigation android:id="@+id/auth"
+        app:startDestination="@id/nav_auth"
+        android:label="@string/title_authorization">
+        <fragment
+            android:id="@+id/nav_auth"
+            android:name="ru.skillbranch.skillarticles.ui.auth.AuthFragment"
+            android:label="fragment_auth"
+            tools:layout="@layout/fragment_auth" >
+            <action
+                android:id="@+id/action_nav_auth_to_page_privacy_policy"
+                app:destination="@id/page_privacy_policy" />
+            <argument android:name="private_destination"
+                app:argType="integer"
+                android:defaultValue="-1" />
+        </fragment>
+        <fragment
+            android:id="@+id/page_privacy_policy"
+            android:name="ru.skillbranch.skillarticles.ui.auth.PrivacyPoliceFragment"
+            android:label="privacy_police_fragment"
+            tools:layout="@layout/fragment_privacy_police" />
+
+    </navigation>
+
+    <!--global actions -->
+    <action
+        android:id="@+id/start_login"
+        app:destination="@id/auth"/>
+
+    <action
+        android:id="@+id/finish_login"
+        app:popUpTo="@id/auth"
+        app:popUpToInclusive="true"/>
+
 </navigation>
