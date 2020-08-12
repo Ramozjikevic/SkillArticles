@@ -77,7 +77,7 @@
         </fragment>
         <fragment
             android:id="@+id/page_privacy_policy"
-            android:name="ru.skillbranch.skillarticles.ui.auth.PrivacyPoliceFragment"
+            android:name="ru.skillbranch.skillarticles.ui.auth.PrivacyPolicyFragment"
             android:label="privacy_police_fragment"
             tools:layout="@layout/fragment_privacy_police" />
 

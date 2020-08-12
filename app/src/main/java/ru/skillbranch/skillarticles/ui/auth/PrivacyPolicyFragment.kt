@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import ru.skillbranch.skillarticles.R
 
-class PrivacyPoliceFragment : Fragment() {
+class PrivacyPolicyFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
