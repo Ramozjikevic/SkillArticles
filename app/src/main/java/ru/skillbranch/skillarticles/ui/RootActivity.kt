@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.extensions.selectDestination
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
@@ -36,7 +37,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
         }
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-           // nav_view.selectDe(destination)
+            nav_view.selectDestination(destination)
         }
     }
 
