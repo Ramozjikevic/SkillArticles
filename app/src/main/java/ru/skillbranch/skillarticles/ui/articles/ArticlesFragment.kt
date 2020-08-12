@@ -1,14 +1,7 @@
 package ru.skillbranch.skillarticles.ui.articles
 
-import androidx.lifecycle.ViewModelProviders
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
@@ -17,10 +10,10 @@ import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
-import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     override val viewModel: ArticlesViewModel by viewModels()
@@ -40,7 +33,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             item.title
         )
 
-        findNavController().navigate(action)
+        viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
     }
 
     override fun setupViews() {

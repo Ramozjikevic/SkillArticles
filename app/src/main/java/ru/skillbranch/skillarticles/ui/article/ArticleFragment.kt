@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -35,7 +36,6 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
-
     private val args: ArticleFragmentArgs by navArgs()
 
     override val viewModel: ArticleViewModel by viewModels {
@@ -82,6 +82,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
      override fun setupViews() {
          setupBottomBar()
          setupSubmenu()
+         root.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
          val avatarSize = root.dpToIntPx(40)
          val cornerRadius = root.dpToIntPx(8)
@@ -100,7 +101,18 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
          tv_title.text = args.title
          tv_author.text = args.author
          tv_date.text = args.date.format()
+
+         et_comment.setOnEditorActionListener { view, _, _ ->
+             root.hideKeyBoard(view)
+             viewModel.handleSendComment()
+             true
+         }
      }
+
+    override fun onDestroyView() {
+        root.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        super.onDestroyView()
+    }
 
      override fun showSearchBar() {
          bottombar.setSearchState(true)
