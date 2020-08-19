@@ -65,7 +65,7 @@ class ArticleItemView@JvmOverloads constructor(
     }
 
     private val tvDescription: TextView = TextView(context).apply {
-        R.id.tv_description
+        id = R.id.tv_description
         textSize = 14f
         setTextColor(colorGray)
     }
