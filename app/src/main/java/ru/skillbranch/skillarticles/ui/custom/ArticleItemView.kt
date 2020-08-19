@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.ui.custom
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,7 +17,11 @@ import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.*
 import kotlin.math.max
 
-class ArticleItemView(context: Context) : ViewGroup(context) {
+class ArticleItemView@JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ViewGroup(context, attrs, defStyleAttr) {
 
     private val colorGray = context.getColor(R.color.color_gray)
     private val colorTextPrimary = context.attrValue(R.attr.colorPrimary)
@@ -37,6 +42,7 @@ class ArticleItemView(context: Context) : ViewGroup(context) {
     }
 
     private val tvAuthor: TextView = TextView(context).apply {
+        id = R.id.tv_author
         textSize = 12f
         setTextColor(colorTextPrimary)
     }
@@ -252,7 +258,7 @@ class ArticleItemView(context: Context) : ViewGroup(context) {
 
     fun bind(data: ArticleItemData) {
         tvDate.text = data.date.format()
-        tvAuthor.text = "data.author"
+        tvAuthor.text = data.author
         tvTitle.text = data.title
 
         Glide.with(context)
