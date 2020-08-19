@@ -252,7 +252,7 @@ class ArticleItemView(context: Context) : ViewGroup(context) {
 
     fun bind(data: ArticleItemData) {
         tvDate.text = data.date.format()
-        tvAuthor.text = data.author
+        tvAuthor.text = "data.author"
         tvTitle.text = data.title
 
         Glide.with(context)
