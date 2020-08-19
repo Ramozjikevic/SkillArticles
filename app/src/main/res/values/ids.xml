@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tv_title" type="id"/>
+    <item name="iv_poster" type="id"/>
+    <item name="tv_description" type="id"/>
+    <item name="tv_read_duration" type="id"/>
+
+</resources>
