@@ -38,6 +38,12 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             nav_view.selectDestination(destination)
+
+            if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
+                controller.popBackStack()
+                val private = arguments?.get("private_destination") as Int?
+                if (private != null) controller.navigate(private)
+            }
         }
     }
 
