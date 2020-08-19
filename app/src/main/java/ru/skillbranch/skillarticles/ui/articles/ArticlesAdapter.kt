@@ -16,10 +16,12 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) : ListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
-        val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
+        //val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
+        val containerView = ArticleItemView(parent.context)
         return ArticleVH(containerView)
     }
 
@@ -33,7 +35,7 @@ class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItemData>() {
     override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData) = oldItem == newItem
 }
 
-class ArticleVH(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class ArticleVH(override val containerView: ArticleItemView) : RecyclerView.ViewHolder(containerView), LayoutContainer {
     @SuppressLint("SetTextI18n")
     fun bind(
         item: ArticleItemData,
@@ -43,7 +45,10 @@ class ArticleVH(override val containerView: View) : RecyclerView.ViewHolder(cont
         val cornerRadius = containerView.context.dpToIntPx(8)
         val categorySize = containerView.context.dpToIntPx(40)
 
-        Glide.with(containerView.context)
+        containerView.bind(item)
+
+
+/*        Glide.with(containerView.context)
             .load(item.poster)
             .transform(CenterCrop(), RoundedCorners(cornerRadius))
             .override(posterSize)
@@ -62,7 +67,7 @@ class ArticleVH(override val containerView: View) : RecyclerView.ViewHolder(cont
         tv_likes_count.text = item.likeCount.toString()
         tv_comments_count.text = item.commentCount.toString()
         tv_read_duration.text = "${item.readDuration} min read"
-
+*/
         itemView.setOnClickListener { listener(item) }
     }
 }
