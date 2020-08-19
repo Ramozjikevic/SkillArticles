@@ -56,7 +56,7 @@ class ArticleItemView@JvmOverloads constructor(
     }
 
     private val ivPoster: ImageView = ImageView(context).apply {
-        R.id.iv_poster
+        id = R.id.iv_poster
         layoutParams = LayoutParams(posterSize, posterSize)
     }
 
@@ -278,5 +278,4 @@ class ArticleItemView@JvmOverloads constructor(
         tvCommentCount.text = data.commentCount.toString()
         tvReadDuration.text = "${data.readDuration} min read"
     }
-
 }
