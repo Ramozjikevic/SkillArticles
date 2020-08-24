@@ -10,13 +10,24 @@ object ArticlesRepository {
 
     private val local = LocalDataHolder
 
-    fun allArticles(): ArticlesDataFactory {
-        return ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
-    }
+    fun allArticles(): ArticlesDataFactory =
+        ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
+
+
+    fun searchArticles(searchQuery: String)  =
+        ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticlesByTitle, searchQuery))
+
 
     private fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
         .take(size)
+
+    private fun searchArticlesByTitle(start: Int, size: Int, queryTitle: String) = local.localArticleItems
+        .asSequence()
+        .filter { it.title.contains(queryTitle, true) }
+        .drop(start)
+        .take(size)
+        .toList()
 }
 
 class ArticlesDataFactory(val strategy: ArticleStrategy) : DataSource.Factory<Int, ArticleItemData>() {
