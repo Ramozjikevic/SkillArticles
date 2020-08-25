@@ -1,10 +1,10 @@
 package ru.skillbranch.skillarticles.ui.custom
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -12,7 +12,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.android.synthetic.main.layout_bottombar.view.*
-import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior
 import kotlin.math.hypot
 
@@ -101,6 +100,16 @@ class Bottombar @JvmOverloads constructor(
             0 -> btn_result_up.isEnabled = false
             searchCount -1 -> btn_result_down.isEnabled = false
         }
+    }
+
+    fun show() {
+        ObjectAnimator.ofFloat(this, "translationY", 0f)
+            .start()
+    }
+
+    fun hide() {
+        ObjectAnimator.ofFloat(this, "translationY", height.toFloat())
+            .start()
     }
 
     private class SavedState : BaseSavedState, Parcelable {
