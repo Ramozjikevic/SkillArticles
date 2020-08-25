@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -130,7 +129,6 @@ class MarkdownContentView @JvmOverloads constructor(
                         it.image.text,
                         it.image.alt
                     )
-                    //iv.id = index++
                     addView(iv)
                     layoutManager.attachToParent(iv, index)
                     index ++
@@ -142,8 +140,6 @@ class MarkdownContentView @JvmOverloads constructor(
                         textSize,
                         it.blockCode.text
                     )
-                    //index ++
-                    //sv.id = index++
                     addView(sv)
                     layoutManager.attachToParent(sv, index)
                     index++
