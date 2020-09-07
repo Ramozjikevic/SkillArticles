@@ -10,7 +10,9 @@ import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(
-    private val listener: (ArticleItemData) -> Unit) :
+    private val itemClickListener: (ArticleItemData) -> Unit,
+    private val toggleBookmarkListener: (String, Boolean) -> Unit
+) :
     PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
         val containerView = ArticleItemView(parent.context)
@@ -18,7 +20,7 @@ class ArticlesAdapter(
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener)
+        holder.bind(getItem(position), itemClickListener, toggleBookmarkListener)
     }
 }
 
@@ -35,9 +37,12 @@ class ArticleVH(override val containerView: ArticleItemView) :
     @SuppressLint("SetTextI18n")
     fun bind(
         item: ArticleItemData?,
-        listener: (ArticleItemData) -> Unit
+        itemClickListener: (ArticleItemData) -> Unit,
+        toggleBookmarkListener: (String, Boolean) -> Unit
     ) {
-        containerView.bind(item!!)
-        itemView.setOnClickListener { listener(item!!) }
+        item?.let { item ->
+            itemView.setOnClickListener { itemClickListener(item) }
+            containerView.bind(item, toggleBookmarkListener)
+        }
     }
 }
