@@ -14,7 +14,6 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.shortFormat
 import kotlin.math.max
 
@@ -290,6 +289,6 @@ class ArticleItemView constructor(
         tv_comments_count.text = "${item.commentCount}"
         tv_read_duration.text = "${item.readDuration} min read"
         iv_bookmark.isChecked = item.isBookmark
-        iv_bookmark.setOnClickListener { toggleBookmarkListener.invoke(item.id, item.isBookmark) }
+        iv_bookmark.setOnClickListener { toggleBookmarkListener.invoke(item.id, !item.isBookmark) }
     }
 }
