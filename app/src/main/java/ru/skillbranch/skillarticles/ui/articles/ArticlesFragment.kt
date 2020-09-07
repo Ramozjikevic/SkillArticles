@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
@@ -25,7 +26,14 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     override val layout: Int = R.layout.fragment_articles
     override val binding: ArticlesBinding by lazy { ArticlesBinding() }
 
-    private val articlesAdapter = ArticlesAdapter { item ->
+    private val articlesAdapter = ArticlesAdapter(
+        itemClickListener = ::navigateTo,
+        toggleBookmarkListener = { id, isChecked ->
+            viewModel.handleToggleBookmark(id, isChecked)
+        }
+    )
+
+    private fun navigateTo(item: ArticleItemData) {
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
             item.id,
             item.author,
@@ -36,7 +44,6 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             item.poster,
             item.title
         )
-
         viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
     }
 
@@ -126,5 +133,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             searchQuery = data.searchQuery
             isLoading = data.isLoading
         }
+
+        //TODO saveUI
     }
 }

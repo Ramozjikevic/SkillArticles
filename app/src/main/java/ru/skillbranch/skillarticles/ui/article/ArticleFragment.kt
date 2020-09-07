@@ -49,7 +49,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         CommentsAdapter {
             viewModel.handleReplyTo(it.slug, it.user.name)
             et_comment.requestFocus()
-            scroll.smoothScrollBy(0, wrap_contents.top)
+            scroll.smoothScrollTo(0, wrap_contents.top)
             et_comment.context.showKeyboard(et_comment)
         }
     }
@@ -115,6 +115,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
              root.hideKeyBoard(view)
              viewModel.handleSendComment(view.text.toString())
              view.text = null
+             //TODO sd
              view.clearFocus()
              true
          }

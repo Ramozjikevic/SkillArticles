@@ -2,32 +2,142 @@ package ru.skillbranch.skillarticles.ui.bookmarks
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.fragment_articles.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.models.ArticleItemData
+import ru.skillbranch.skillarticles.ui.articles.ArticlesAdapter
+import ru.skillbranch.skillarticles.ui.articles.ArticlesFragmentDirections
+import ru.skillbranch.skillarticles.ui.base.BaseFragment
+import ru.skillbranch.skillarticles.ui.base.Binding
+import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
+import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
+import ru.skillbranch.skillarticles.ui.delegates.RenderProp
+import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.bookmarks.BookmarksViewModel
 
-class BookmarksFragment : Fragment() {
+class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
+    override val viewModel: BookmarksViewModel by viewModels()
+    override val layout: Int = R.layout.fragment_bookmarks
+    override val binding: BookmarksBinding by lazy { BookmarksBinding() }
 
-    companion object {
-        fun newInstance() = BookmarksFragment()
+    private val articlesAdapter = ArticlesAdapter(
+        itemClickListener = ::navigateTo,
+        toggleBookmarkListener = { id, isChecked ->
+            viewModel.handleToggleBookmark(id, isChecked)
+        }
+    )
+
+    private fun navigateTo(item: ArticleItemData) {
+        val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
+            item.id,
+            item.author,
+            item.authorAvatar,
+            item.category,
+            item.categoryIcon,
+            item.date,
+            item.poster,
+            item.title
+        )
+        viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
     }
 
-    private lateinit var viewModel: BookmarksViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_bookmarks, container, false)
+    override val prepareToolbar: (ToolbarBuilder.() -> Unit) = {
+        setTitle(findNavController().currentDestination?.label.toString())
+        addMenuItem(
+            MenuItemHolder(
+                "Search",
+                R.id.action_search,
+                R.drawable.ic_search_black_24dp,
+                R.layout.search_view_layout
+            )
+        )
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(BookmarksViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        val menuItem = menu.findItem(R.id.action_search)
+        val searchView = menuItem.actionView as SearchView
+        if(binding.isSearch) {
+            menuItem.expandActionView()
+            searchView.setQuery(binding.searchQuery, false)
+            if(binding.isFocusedSearch) searchView.requestFocus()
+            else searchView.clearFocus()
+        }
+
+        menuItem.setOnActionExpandListener (object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+        })
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearch(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearch(newText)
+                return true
+            }
+        })
+
+        searchView.setOnCloseListener {
+            viewModel.handleSearchMode(false)
+            true
+        }
+
+    }
+
+    override fun setupViews() {
+        with(rv_articles) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = articlesAdapter
+            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        }
+
+        viewModel.observeList(viewLifecycleOwner) {
+            articlesAdapter.submitList(it)
+        }
+    }
+
+    class BookmarksBinding : Binding() {
+        val isFocusedSearch: Boolean = false
+        var searchQuery: String? = null
+        var isSearch: Boolean = false
+        var isLoading: Boolean by RenderProp(true) {
+
+        }
+
+        override fun bind(data: IViewModelState) {
+            data as ArticlesState
+            isSearch = data.isSearch
+            searchQuery = data.searchQuery
+            isLoading = data.isLoading
+        }
+
+        //TODO saveUI
     }
 
 }

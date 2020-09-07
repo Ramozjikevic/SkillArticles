@@ -243,6 +243,7 @@ data class ArticleState(
     val answerToSlug: String? = null,
     val showBottombar: Boolean = true
 ) : IViewModelState {
+    //TODO saveState
     override fun save(outState: SavedStateHandle) {
         outState.set("isSearch", isSearch)
         outState.set("searchQuery", searchQuery)

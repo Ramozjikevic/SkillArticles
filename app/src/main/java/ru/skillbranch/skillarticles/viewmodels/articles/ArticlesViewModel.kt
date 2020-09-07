@@ -1,7 +1,6 @@
 package ru.skillbranch.skillarticles.viewmodels.articles
 
 import androidx.lifecycle.*
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import kotlinx.coroutines.Dispatchers
@@ -54,6 +53,12 @@ class ArticlesViewModel(handle: SavedStateHandle) :
 
     fun handleSearchMode(isSearch: Boolean) {
         updateState { it.copy(isSearch = isSearch) }
+    }
+
+    fun handleToggleBookmark(id:String, isChecked:Boolean) {
+        updateState { it.copy(isLoading = true) }
+        repository.updateBookmark(id, !isChecked)
+        updateState { it.copy(isLoading = false) }
     }
 
     private fun buildPagedList(
@@ -109,11 +114,8 @@ class ArticlesViewModel(handle: SavedStateHandle) :
                     )
                 )
             }
-
         }
-
     }
-
 }
 
 data class ArticlesState(
