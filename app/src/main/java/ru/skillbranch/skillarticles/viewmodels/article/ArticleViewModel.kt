@@ -259,9 +259,9 @@ data class ArticleState(
         outState.set("searchQuery", searchQuery)
         outState.set("searchResults", searchResults)
         outState.set("searchPosition", searchPosition)
-        outState.set("comment", comment)
+/*        outState.set("comment", comment)
         outState.set("answerTo", answerTo)
-        outState.set("answerToSlug", answerToSlug)
+        outState.set("answerToSlug", answerToSlug)*/
     }
 
     override fun restore(savedState: SavedStateHandle): ArticleState {
@@ -269,10 +269,10 @@ data class ArticleState(
             isSearch = savedState["isSearch"] ?: false,
             searchQuery = savedState["searchQuery"],
             searchResults = savedState["searchResults"] ?: emptyList(),
-            searchPosition = savedState["searchPosition"] ?: 0,
-            comment = savedState["comment"],
+            searchPosition = savedState["searchPosition"] ?: 0
+/*            comment = savedState["comment"],
             answerTo = savedState["answerTo"],
-            answerToSlug = savedState["answerToSlug"]
+            answerToSlug = savedState["answerToSlug"]*/
         )
     }
 }

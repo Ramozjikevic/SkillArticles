@@ -122,7 +122,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
          wrap_contents.setEndIconOnClickListener {view ->
              root.hideKeyBoard(view)
              viewModel.handleClearComment()
-             et_comment.text = null
              et_comment.clearFocus()
          }
 
@@ -278,9 +277,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         private var content: List<MarkdownElement> by RenderProp(emptyList()) {
             tv_text_content.isLoading = it.isEmpty()
-            tv_text_content.setContent(it)
+            //tv_text_content.setContent(it)
             if(it.isNotEmpty()) setupCopyListener()
-
         }
 
         private var answerTo by RenderProp("Comment") { wrap_contents.hint = it}
@@ -310,7 +308,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         private var comment by RenderProp("") {
             et_comment.setText(it)
-            if (it.isBlank() && et_comment.hasFocus()) et_comment.clearFocus()
         }
 
         override fun bind(data: IViewModelState) {
