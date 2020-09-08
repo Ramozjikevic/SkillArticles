@@ -114,13 +114,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
          et_comment.setOnEditorActionListener { view, _, _ ->
              root.hideKeyBoard(view)
              viewModel.handleSendComment(view.text.toString())
-             view.text = null
              view.clearFocus()
              true
          }
          et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus) }
 
          wrap_contents.setEndIconOnClickListener {view ->
+             root.hideKeyBoard(view)
              viewModel.handleClearComment()
              et_comment.text = null
              et_comment.clearFocus()
@@ -310,6 +310,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         private var comment by RenderProp("") {
             et_comment.setText(it)
+            if (it.isBlank() && et_comment.hasFocus()) et_comment.clearFocus()
         }
 
         override fun bind(data: IViewModelState) {

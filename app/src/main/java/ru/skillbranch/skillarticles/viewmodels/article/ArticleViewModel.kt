@@ -178,14 +178,13 @@ class ArticleViewModel(
     }
 
     fun handleSendComment(comment: String?) {
-
         when {
             comment.isNullOrBlank() -> {
                 notify(Notify.TextMessage("Comment cannot be empty"))
             }
             !currentState.isAuth -> {
-                navigate(NavigationCommand.StartLogin())
                 updateState { it.copy(comment = comment) }
+                navigate(NavigationCommand.StartLogin())
             }
             else -> viewModelScope.launch {
                 repository.sendComment(articleId, comment, currentState.answerToSlug)
@@ -219,7 +218,7 @@ class ArticleViewModel(
     }
 
     fun handleClearComment() {
-        updateState { it.copy(answerTo = null, answerToSlug = null) }
+        updateState { it.copy(answerTo = null, answerToSlug = null, comment = null) }
     }
 
     fun handleReplyTo(slug: String, name: String) {
