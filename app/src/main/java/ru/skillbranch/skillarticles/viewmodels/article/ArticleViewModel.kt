@@ -210,7 +210,6 @@ class ArticleViewModel(
             dataFactory,
             listConfing
         )
-
             .setFetchExecutor(Executors.newSingleThreadExecutor())
             .build()
     }
@@ -255,12 +254,15 @@ data class ArticleState(
     val showBottombar: Boolean = true,
     val comment: String? = null
 ) : IViewModelState {
-    //TODO saveState
+
     override fun save(outState: SavedStateHandle) {
         outState.set("isSearch", isSearch)
         outState.set("searchQuery", searchQuery)
         outState.set("searchResults", searchResults)
         outState.set("searchPosition", searchPosition)
+        outState.set("comment", comment)
+        outState.set("answerTo", answerTo)
+        outState.set("answerToSlug", answerToSlug)
     }
 
     override fun restore(savedState: SavedStateHandle): ArticleState {
@@ -268,7 +270,10 @@ data class ArticleState(
             isSearch = savedState["isSearch"] ?: false,
             searchQuery = savedState["searchQuery"],
             searchResults = savedState["searchResults"] ?: emptyList(),
-            searchPosition = savedState["searchPosition"] ?: 0
+            searchPosition = savedState["searchPosition"] ?: 0,
+            comment = savedState["comment"],
+            answerTo = savedState["answerTo"],
+            answerToSlug = savedState["answerToSlug"]
         )
     }
 }
