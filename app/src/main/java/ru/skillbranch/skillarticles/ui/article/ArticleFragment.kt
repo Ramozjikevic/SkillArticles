@@ -114,9 +114,11 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
          et_comment.setOnEditorActionListener { view, _, _ ->
              root.hideKeyBoard(view)
              viewModel.handleSendComment(view.text.toString())
-             view.text = null
-             //TODO sd
-             view.clearFocus()
+
+             if(viewModel.currentState.isAuth) {
+                 view.text = null
+                 view.clearFocus()
+             }
              true
          }
          et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus) }
@@ -309,6 +311,10 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             }
         }
 
+        private var comment by RenderProp("") {
+            et_comment.setText(it)
+        }
+
         override fun bind(data: IViewModelState) {
             data as ArticleState
 
@@ -326,6 +332,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             searcResults = data.searchResults
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
+            comment = data.comment ?: ""
         }
 
         override fun saveUi(outState: Bundle) {

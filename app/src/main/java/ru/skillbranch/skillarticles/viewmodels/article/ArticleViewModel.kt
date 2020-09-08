@@ -175,12 +175,17 @@ class ArticleViewModel(
         notify(Notify.TextMessage("Code copy to clipboard"))
     }
 
-    fun handleSendComment(comment: String) {
-        if(!currentState.isAuth) navigate(NavigationCommand.StartLogin())
-        viewModelScope.launch {
-            repository.sendComment(articleId, comment, currentState.answerToSlug)
-            withContext(Dispatchers.Main) {
-                updateState { it.copy(answerTo = null, answerToSlug = null) }
+    fun handleSendComment(comment: String?) {
+        updateState { it.copy(comment = comment) }
+
+        when {
+            comment.isNullOrBlank() -> return
+            !currentState.isAuth -> navigate(NavigationCommand.StartLogin())
+            else -> viewModelScope.launch {
+                repository.sendComment(articleId, comment, currentState.answerToSlug)
+                withContext(Dispatchers.Main) {
+                    updateState { it.copy(answerTo = null, answerToSlug = null) }
+                }
             }
         }
     }
@@ -241,7 +246,8 @@ data class ArticleState(
     val commentsCount: Int = 0,
     val answerTo: String? = null,
     val answerToSlug: String? = null,
-    val showBottombar: Boolean = true
+    val showBottombar: Boolean = true,
+    val comment: String? = null
 ) : IViewModelState {
     //TODO saveState
     override fun save(outState: SavedStateHandle) {
