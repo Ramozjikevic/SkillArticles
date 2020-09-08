@@ -27,7 +27,8 @@ class ArticleViewModel(
     handle: SavedStateHandle,
     private val articleId: String
 ) :
-    BaseViewModel<ArticleState>(handle,
+    BaseViewModel<ArticleState>(
+        handle,
         ArticleState()
     ), IArticleViewModel {
     private val repository = ArticleRepository
@@ -39,9 +40,10 @@ class ArticleViewModel(
             .build()
     }
 
-    private val listData : LiveData<PagedList<CommentItemData>> = Transformations.switchMap(getArticleData()){
-        buildPagedList(repository.allComments(articleId, it?.commentCount?:0))
-    }
+    private val listData: LiveData<PagedList<CommentItemData>> =
+        Transformations.switchMap(getArticleData()) {
+            buildPagedList(repository.allComments(articleId, it?.commentCount ?: 0))
+        }
 
     init {
         subscribeOnDataSource(getArticleData()) { article, state ->
@@ -79,7 +81,7 @@ class ArticleViewModel(
             )
         }
 
-        subscribeOnDataSource(repository.isAuth()){ auth, state ->
+        subscribeOnDataSource(repository.isAuth()) { auth, state ->
             state.copy(isAuth = auth)
         }
     }
@@ -176,15 +178,19 @@ class ArticleViewModel(
     }
 
     fun handleSendComment(comment: String?) {
-        updateState { it.copy(comment = comment) }
 
         when {
-            comment.isNullOrBlank() -> return
-            !currentState.isAuth -> navigate(NavigationCommand.StartLogin())
+            comment.isNullOrBlank() -> {
+                notify(Notify.TextMessage("Comment cannot be empty"))
+            }
+            !currentState.isAuth -> {
+                navigate(NavigationCommand.StartLogin())
+                updateState { it.copy(comment = comment) }
+            }
             else -> viewModelScope.launch {
                 repository.sendComment(articleId, comment, currentState.answerToSlug)
                 withContext(Dispatchers.Main) {
-                    updateState { it.copy(answerTo = null, answerToSlug = null) }
+                    updateState { it.copy(answerTo = null, answerToSlug = null, comment = null) }
                 }
             }
         }
@@ -192,14 +198,14 @@ class ArticleViewModel(
 
     fun observeList(
         owner: LifecycleOwner,
-        onChanged: (list:PagedList<CommentItemData>) -> Unit
+        onChanged: (list: PagedList<CommentItemData>) -> Unit
     ) {
         listData.observe(owner, Observer { onChanged(it) })
     }
 
     private fun buildPagedList(
         dataFactory: CommentsDataFactory
-    ) : LiveData<PagedList<CommentItemData>> {
+    ): LiveData<PagedList<CommentItemData>> {
         return LivePagedListBuilder<String, CommentItemData>(
             dataFactory,
             listConfing

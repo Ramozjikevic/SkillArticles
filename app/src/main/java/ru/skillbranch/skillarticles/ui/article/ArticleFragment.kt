@@ -114,11 +114,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
          et_comment.setOnEditorActionListener { view, _, _ ->
              root.hideKeyBoard(view)
              viewModel.handleSendComment(view.text.toString())
-
-             if(viewModel.currentState.isAuth) {
-                 view.text = null
-                 view.clearFocus()
-             }
+             view.text = null
+             view.clearFocus()
              true
          }
          et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus) }
