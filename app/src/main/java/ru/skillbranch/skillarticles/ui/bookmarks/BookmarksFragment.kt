@@ -1,15 +1,13 @@
 package ru.skillbranch.skillarticles.ui.bookmarks
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_articles.*
+import kotlinx.android.synthetic.main.fragment_bookmarks.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.articles.ArticlesAdapter
@@ -111,7 +109,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
     }
 
     override fun setupViews() {
-        with(rv_articles) {
+        with(rv_bookmarks) {
             layoutManager = LinearLayoutManager(context)
             adapter = articlesAdapter
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
