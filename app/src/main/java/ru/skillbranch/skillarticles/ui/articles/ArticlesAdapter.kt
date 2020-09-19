@@ -6,29 +6,29 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
-import ru.skillbranch.skillarticles.data.models.ArticleItemData
+import ru.skillbranch.skillarticles.data.local.entities.ArticleItem
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(
-    private val itemClickListener: (ArticleItemData) -> Unit,
-    private val toggleBookmarkListener: (String, Boolean) -> Unit
+    private val itemClickListener: (ArticleItem) -> Unit
 ) :
-    PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
+    PagedListAdapter<ArticleItem, ArticleVH>(ArticleDiffCallback()) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
         val containerView = ArticleItemView(parent.context)
         return ArticleVH(containerView)
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), itemClickListener, toggleBookmarkListener)
+        holder.bind(getItem(position), itemClickListener)
     }
 }
 
-class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {
-    override fun areItemsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData) =
+class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItem>() {
+    override fun areItemsTheSame(oldItem: ArticleItem, newItem: ArticleItem) =
         oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData) =
+    override fun areContentsTheSame(oldItem: ArticleItem, newItem: ArticleItem) =
         oldItem == newItem
 }
 
@@ -36,13 +36,12 @@ class ArticleVH(override val containerView: ArticleItemView) :
     RecyclerView.ViewHolder(containerView), LayoutContainer {
     @SuppressLint("SetTextI18n")
     fun bind(
-        item: ArticleItemData?,
-        itemClickListener: (ArticleItemData) -> Unit,
-        toggleBookmarkListener: (String, Boolean) -> Unit
+        item: ArticleItem?,
+        itemClickListener: (ArticleItem) -> Unit
     ) {
         item?.let { item ->
             itemView.setOnClickListener { itemClickListener(item) }
-            containerView.bind(item, toggleBookmarkListener)
+            containerView.bind(item)
         }
     }
 }
