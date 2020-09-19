@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_bookmarks.*
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.data.models.ArticleItemData
+import ru.skillbranch.skillarticles.data.local.entities.ArticleItem
 import ru.skillbranch.skillarticles.ui.articles.ArticlesAdapter
 import ru.skillbranch.skillarticles.ui.articles.ArticlesFragmentDirections
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
@@ -34,7 +34,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
         }
     )
 
-    private fun navigateTo(item: ArticleItemData) {
+    private fun navigateTo(item: ArticleItem) {
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
             item.id,
             item.author,
