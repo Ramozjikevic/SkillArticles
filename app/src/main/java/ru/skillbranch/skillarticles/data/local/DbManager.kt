@@ -25,10 +25,10 @@ object DbManager {
         ArticleContent::class
     ],
     version = AppDb.DATABASE_VERSION,
-    exportSchema = true,
+    exportSchema = false,
     views = [ArticleItem::class, ArticleFull::class]
 )
-@TypeConverters(DateConverter::class, ArticleCounts::class)
+@TypeConverters(DateConverter::class)
 abstract class AppDb : RoomDatabase() {
     companion object {
         const val DATABASE_NAME = BuildConfig.APPLICATION_ID + ".db"
@@ -38,7 +38,7 @@ abstract class AppDb : RoomDatabase() {
     abstract fun articlesDao(): ArticlesDao
     abstract fun articleCountsDao(): ArticleCountsDao
     abstract fun categoriesDao(): CategoriesDao
-    abstract fun articlePersonalInfos(): ArticlePersonalInfosDao
+    abstract fun articlePersonalInfosDao(): ArticlePersonalInfosDao
     abstract fun tagsDao() : TagsDao
     abstract fun articleContentDao() : ArticleContentsDao
 }
