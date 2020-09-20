@@ -10,30 +10,32 @@
     <fragment
         android:id="@+id/page_article"
         android:name="ru.skillbranch.skillarticles.ui.article.ArticleFragment"
-        android:label="fragment_article"
-        tools:layout="@layout/fragment_article" >
+        android:label="ArticleFragment" >
         <argument
             android:name="article_id"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="-1" />
         <argument
             android:name="author"
             app:argType="string" />
-        <argument android:name="author_avatar"
+        <argument
+            android:name="author_avatar"
             app:argType="string" />
         <argument
             android:name="category"
             app:argType="string" />
-        <argument android:name="category_icon"
-            app:argType="string" />
         <argument
-            android:name="date"
-            app:argType="java.util.Date" />
+            android:name="category_icon"
+            app:argType="string" />
         <argument
             android:name="poster"
             app:argType="string" />
         <argument
             android:name="title"
             app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="java.util.Date" />
     </fragment>
     <fragment
         android:id="@+id/nav_articles"
@@ -41,8 +43,15 @@
         android:label="@string/title_articles"
         tools:layout="@layout/fragment_articles" >
         <action
-            android:id="@+id/action_nav_articles_to_page_article"
+            android:id="@+id/action_to_page_article"
             app:destination="@id/page_article" />
+        <action
+            android:id="@+id/chose_category"
+            app:destination="@id/dialog_chose_category" />
+        <argument
+            android:name="isBookmarks"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
@@ -51,9 +60,21 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/nav_bookmarks"
-        android:name="ru.skillbranch.skillarticles.ui.bookmarks.BookmarksFragment"
+        android:name="ru.skillbranch.skillarticles.ui.articles.ArticlesFragment"
         android:label="@string/title_bookmarks"
-        tools:layout="@layout/fragment_bookmarks" />
+        tools:layout="@layout/fragment_articles" >
+        <argument
+            android:name="isBookmarks"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action
+            android:id="@+id/action_to_page_article"
+            app:destination="@id/page_article" />
+        <action
+            android:id="@+id/chose_category"
+            app:destination="@id/dialog_chose_category" />
+    </fragment>
+
     <fragment
         android:id="@+id/nav_transcriptions"
         android:name="ru.skillbranch.skillarticles.ui.transcriptions.TranscriptionsFragment"
@@ -92,5 +113,16 @@
         android:id="@+id/finish_login"
         app:popUpTo="@id/auth"
         app:popUpToInclusive="true"/>
+    <dialog
+        android:id="@+id/dialog_chose_category"
+        android:name="ru.skillbranch.skillarticles.ui.dialogs.ChoseCategoryDialog"
+        android:label="ChoseCategoryDialog">
+        <argument
+            android:name="selected_categories"
+            app:argType="string[]" />
+        <argument
+            android:name="categories"
+            app:argType="ru.skillbranch.skillarticles.data.local.entities.CategoryData[]" />
+    </dialog>
 
 </navigation>
