@@ -10,7 +10,7 @@ import ru.skillbranch.skillarticles.data.local.entities.ArticleItem
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(
-    private val itemClickListener: (ArticleItem) -> Unit
+    private val itemClickListener: (ArticleItem, Boolean) -> Unit
 ) :
     PagedListAdapter<ArticleItem, ArticleVH>(ArticleDiffCallback()) {
 
@@ -37,11 +37,10 @@ class ArticleVH(override val containerView: ArticleItemView) :
     @SuppressLint("SetTextI18n")
     fun bind(
         item: ArticleItem?,
-        itemClickListener: (ArticleItem) -> Unit
+        itemClickListener: (ArticleItem, Boolean) -> Unit
     ) {
         item?.let { item ->
-            itemView.setOnClickListener { itemClickListener(item) }
-            containerView.bind(item)
+            (containerView as ArticleItemView).bind(item, itemClickListener)
         }
     }
 }
