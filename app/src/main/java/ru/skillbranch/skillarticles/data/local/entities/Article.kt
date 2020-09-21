@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.data.local.entities
 
 import androidx.room.*
+import ru.skillbranch.skillarticles.data.local.ListConverter
 import ru.skillbranch.skillarticles.data.local.MarkdownConverter
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import java.util.*
@@ -46,15 +47,15 @@ data class ArticleItem(
     val date: Date = Date(),
     val author: String,
     @ColumnInfo(name = "author_avatar")
-    val authorAvatar: String,
+    val authorAvatar: String?,
     val title: String,
     val description: String,
     val poster: String,
     @ColumnInfo(name = "category_id")
-    val categoryId: String = "0",
-    val category: String = "0",
+    val categoryId: String,
+    val category: String,
     @ColumnInfo(name = "category_icon")
-    val categoryIcon: String = "",
+    val categoryIcon: String,
     @ColumnInfo(name = "like_count")
     val likeCount: Int = 0,
     @ColumnInfo(name = "comment_count")
@@ -69,13 +70,15 @@ data class ArticleItem(
     SELECT id, article.title AS title, description, author_user_id, author_avatar, author_name, date,
     category.category_id AS category_category_id, category.title AS category_title, category.icon AS category_icon,
     content.share_link AS share_link, content.content AS content,
-    personal.is_bookmark AS is_bookmark, personal.is_like AS is_like
+    personal.is_bookmark AS is_bookmark, personal.is_like AS is_like, GROUP_CONCAT(refs.t_id) as tags, source
     FROM articles AS article
     INNER JOIN article_categories AS category ON category.category_id = article.category_id
     LEFT JOIN article_contents AS content ON content.article_id = id
     LEFT JOIN article_personal_infos AS personal ON personal.article_id = id
+    LEFT JOIN article_tag_x_ref AS refs ON id = refs.a_id 
+    GROUP BY id
 """)
-@TypeConverters(MarkdownConverter::class)
+@TypeConverters(MarkdownConverter::class, ListConverter::class)
 data class ArticleFull(
     val id: String,
     val title: String,
@@ -91,7 +94,20 @@ data class ArticleFull(
     @ColumnInfo(name = "is_like")
     val isLike: Boolean = false,
     val date: Date,
-    val content: List<MarkdownElement>? = null
-   // val source: String? = null,
-   // val tags: List<String>
+    val content: List<MarkdownElement>? = null,
+    val source: String? = null,
+    val tags: List<String> = emptyList()
 )
+
+/*data class ArticleWithShareLink(
+    val id: String,
+    val title: String,
+    val description: String,
+    @Relation(
+        entity = ArticleContent::class,
+        parentColumn = "id",
+        entityColumn = "article_id",
+        projection = ["share_link"]
+    )
+    val link: String
+)*/
