@@ -40,5 +40,5 @@ abstract class AppDb : RoomDatabase() {
     abstract fun categoriesDao(): CategoriesDao
     abstract fun articlePersonalInfosDao(): ArticlePersonalInfosDao
     abstract fun tagsDao() : TagsDao
-    abstract fun articleContentDao() : ArticleContentsDao
+    abstract fun articleContentsDao() : ArticleContentsDao
 }

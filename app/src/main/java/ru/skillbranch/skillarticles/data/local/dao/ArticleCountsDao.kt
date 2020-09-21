@@ -50,5 +50,5 @@ interface ArticleCountsDao : BaseDao<ArticleCounts> {
        WHERE article_id = :articleId
     """
     )
-    fun getCommentCount(articleId: String): LiveData<Int>
+    fun getCommentsCount(articleId: String): LiveData<Int>
 }
