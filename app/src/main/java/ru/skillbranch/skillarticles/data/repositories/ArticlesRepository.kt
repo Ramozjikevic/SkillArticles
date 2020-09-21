@@ -33,7 +33,7 @@ object ArticlesRepository : IArticlesRepository {
     private var articleCountsDao = db.articleCountsDao()
     private var categoriesDao = db.categoriesDao()
     private var tagsDao = db.tagsDao()
-    private var articlePersonalDao = db.articlePersonalInfosDao()
+    private var articlePersonalDao = db.articlePersonalInfos()
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     fun setupTestDao(
