@@ -28,11 +28,12 @@ interface IArticlesRepository {
 object ArticlesRepository : IArticlesRepository {
 
     private val network = NetworkDataHolder
+
     private var articlesDao = db.articlesDao()
     private var articleCountsDao = db.articleCountsDao()
     private var categoriesDao = db.categoriesDao()
     private var tagsDao = db.tagsDao()
-    private var articlePersonalDao = db.articlePersonalInfos()
+    private var articlePersonalDao = db.articlePersonalInfosDao()
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     fun setupTestDao(
@@ -48,7 +49,6 @@ object ArticlesRepository : IArticlesRepository {
         this.tagsDao = tagsDao
         this.articlePersonalDao = articlePersonalDao
     }
-
 
     override fun loadArticlesFromNetwork(start: Int, size: Int): List<ArticleRes> {
         return network.findArticlesItem(start, size)
@@ -75,7 +75,7 @@ object ArticlesRepository : IArticlesRepository {
     }
 
     override fun toggleBookmark(articleId: String) {
-        articlePersonalDao.toggleBookMarkOrInsert(articleId)
+        articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
     override fun findTags(): LiveData<List<String>> {
@@ -103,7 +103,6 @@ class ArticleFilter(
 ) {
     fun toQuery(): String {
         val qb = QueryBuilder()
-
         qb.table("ArticleItem")
 
         if (search != null && !isHashtag) qb.appendWhere("title LIKE '%$search%'")
@@ -126,52 +125,40 @@ class QueryBuilder() {
     private var whereCondition: String? = null
     private var order: String? = null
 
+    fun build(): String {
+        check(table != null) { "table must not be null" }
+        val stringBuilder = StringBuilder("SELECT ")
+            .append("$selectColumns ")
+            .append("FROM $table")
+
+        if (joinTables != null) stringBuilder.append(joinTables)
+        if (whereCondition != null) stringBuilder.append(whereCondition)
+        if (order != null) stringBuilder.append(order)
+
+        return stringBuilder.toString()
+    }
+
     fun table(table: String): QueryBuilder {
         this.table = table
         return this
     }
 
     fun orderBy(column: String, isDesc: Boolean = true): QueryBuilder {
-        order = "ORDER BY $column ${if (isDesc) "DESC" else "ASC"}"
+        order = " ORDER BY $column ${ if(isDesc) "DESC" else "ASC" }"
         return this
     }
 
-    fun appendWhere(condition: String, logic: String = "AND"): QueryBuilder {
-        if (whereCondition.isNullOrEmpty()) whereCondition = "WHERE $condition "
-        else whereCondition += "$logic $condition "
+    fun appendWhere(condition: String, logic: String = " AND"): QueryBuilder {
+        if (whereCondition.isNullOrEmpty()) whereCondition = " WHERE $condition"
+        else whereCondition += "$logic $condition"
+
         return this
     }
 
     fun innerJoin(table: String, on: String): QueryBuilder {
-        if (joinTables.isNullOrEmpty()) joinTables = "INNER JOIN $table ON $on"
-        else joinTables += "INNER JOIN $table ON $on "
+        if (joinTables.isNullOrEmpty()) joinTables = " INNER JOIN $table ON $on"
+        else joinTables += " INNER JOIN $table ON $on"
+
         return this
     }
-
-    fun build(): String {
-        check(table != null) { "table must be not null" }
-        val strBuilder = StringBuilder("SELECT ")
-            .append("$selectColumns ")
-            .append("FROM $table ")
-
-        if (joinTables != null) strBuilder.append(joinTables)
-        if (whereCondition != null) strBuilder.append(whereCondition)
-        if (order != null) strBuilder.append(order)
-        return strBuilder.toString()
-    }
-}
-
-fun List<ArticleItem>.filterBy(
-    by: (ArticleItem) -> Boolean
-): List<ArticleItem> {
-    return this.asSequence()
-        .filter { by(it) }
-        .toList()
-}
-
-fun List<ArticleItem>.takeByRange(
-    start: Int,
-    size: Int
-): List<ArticleItem> {
-    return this.drop(start).take(size)
 }
