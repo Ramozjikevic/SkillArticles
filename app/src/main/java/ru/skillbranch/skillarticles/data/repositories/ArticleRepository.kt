@@ -38,7 +38,7 @@ object ArticleRepository : IArticleRepository {
     private val network = NetworkDataHolder
     private val preferences = PrefManager
     private var articleDao = db.articlesDao()
-    private var articlePersonalDao = db.articlePersonalInfos()
+    private var articlePersonalDao = db.articlePersonalInfosDao()
     private var articleCountsDao = db.articleCountsDao()
     private var articleContentDao = db.articleContentDao()
 
@@ -66,7 +66,7 @@ object ArticleRepository : IArticleRepository {
     }
 
     override fun toggleBookmark(articleId: String) {
-        articlePersonalDao.toggleBookMarkOrInsert(articleId)
+        articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
     override fun updateSettings(appSettings: AppSettings) {
