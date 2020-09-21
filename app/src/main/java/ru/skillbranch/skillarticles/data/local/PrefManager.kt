@@ -21,12 +21,16 @@ object PrefManager {
         return MutableLiveData(AppSettings())
     }
 
-    fun isAuth() : MutableLiveData<Boolean> {
+    fun isAuth() :MutableLiveData<Boolean> {
         //TODO implement
         return MutableLiveData(false)
     }
 
     fun setAuth(auth: Boolean): Unit {
+        //TODO implement
+    }
+
+    fun updateSettings(settings: AppSettings) {
         //TODO implement
     }
 }
