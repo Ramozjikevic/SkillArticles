@@ -57,7 +57,7 @@ object ArticleRepository : IArticleRepository {
         articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
-    override fun isAuth(): LiveData<Boolean> = preferences.isAuth()
+    override fun isAuth(): MutableLiveData<Boolean> = preferences.isAuth()
 
     override fun updateSettings(settings: AppSettings) {
         preferences.updateSettings(settings)
