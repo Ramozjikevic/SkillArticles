@@ -99,7 +99,7 @@ data class ArticleFull(
     val tags: List<String> = emptyList()
 )
 
-/*data class ArticleWithShareLink(
+data class ArticleWithShareLink(
     val id: String,
     val title: String,
     val description: String,
@@ -110,4 +110,4 @@ data class ArticleFull(
         projection = ["share_link"]
     )
     val link: String
-)*/
+)

@@ -19,19 +19,10 @@ interface ArticleCountsDao : BaseDao<ArticleCounts> {
             .also { if (it.isNotEmpty()) update(it) }
     }
 
-    @Query(
-        """
-        SELECT * FROM article_counts
-    """
-    )
+    @Query("SELECT * FROM article_counts")
     fun findArticleCounts(): List<ArticleCounts>
 
-    @Query(
-        """
-       UPDATE article_counts SET likes = likes+1, updated_at = CURRENT_TIMESTAMP 
-       WHERE article_id = :articleId
-    """
-    )
+    @Query("SELECT * FROM article_counts WHERE article_id = :articleId")
     fun incrementLike(articleId: String): Int
 
     @Query(
