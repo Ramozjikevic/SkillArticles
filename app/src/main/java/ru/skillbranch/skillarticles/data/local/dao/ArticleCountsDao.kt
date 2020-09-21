@@ -20,7 +20,10 @@ interface ArticleCountsDao : BaseDao<ArticleCounts> {
     }
 
     @Query("SELECT * FROM article_counts")
-    fun findArticleCounts(): List<ArticleCounts>
+    fun findArticleCounts(): LiveData<List<ArticleCounts>>
+
+    @Query("SELECT * FROM article_counts WHERE article_id = :articleId")
+    fun findArticleCounts(articleId: String): LiveData<ArticleCounts>
 
     @Query("SELECT * FROM article_counts WHERE article_id = :articleId")
     fun incrementLike(articleId: String): Int
