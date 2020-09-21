@@ -37,26 +37,14 @@ interface IArticleRepository {
 object ArticleRepository : IArticleRepository {
     private val network = NetworkDataHolder
     private val preferences = PrefManager
-    private var articleDao = db.articlesDao()
+
+    private var articlesDao = db.articlesDao()
     private var articlePersonalDao = db.articlePersonalInfosDao()
     private var articleCountsDao = db.articleCountsDao()
-    private var articleContentDao = db.articleContentDao()
-
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    fun setupTestDao(
-        articlesDao: ArticlesDao,
-        articlePersonalDao: ArticlePersonalInfosDao,
-        articleCountsDao: ArticleCountsDao,
-        articleContentDao: ArticleContentsDao
-    ){
-        this.articleDao = articlesDao
-        this.articlePersonalDao = articlePersonalDao
-        this.articleCountsDao = articleCountsDao
-        this.articleContentDao = articleContentDao
-    }
+    private var articleContentDao = db.articleContentsDao()
 
     override fun findArticle(articleId: String): LiveData<ArticleFull> {
-        return articleDao.findFullArticle(articleId)
+        return articlesDao.findFullArticle(articleId)
     }
 
     override fun getAppSettings(): LiveData<AppSettings> = preferences.getAppSettings()
@@ -69,49 +57,40 @@ object ArticleRepository : IArticleRepository {
         articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
-    override fun updateSettings(appSettings: AppSettings) {
-        //TODO
+    override fun isAuth(): LiveData<Boolean> = preferences.isAuth()
+
+    override fun updateSettings(settings: AppSettings) {
+        preferences.updateSettings(settings)
     }
 
-    override fun fetchArticleContent(articleId: String) {
-        val content = network.loadArticleContent(articleId).apply { sleep(1500) }
-        articleContentDao.insert(content.toArticleContent())
-    }
-
-    override fun findArticleCommentCount(articleId: String): LiveData<Int> {
-        return articleCountsDao.getCommentCount(articleId)
-    }
-
-    override fun isAuth(): MutableLiveData<Boolean> = preferences.isAuth()
-
-    override fun loadAllComments(articleId: String, totalCount: Int) =
-        CommentsDataFactory(
-            itemProvider = ::loadCommentsByRange,
-            articleId = articleId,
-            totalCount = totalCount
-        )
-
-    override fun loadCommentsByRange(
-        slug: String?,
-        size: Int,
-        articleId: String
-    ): List<CommentItemData> {
+    override fun loadCommentsByRange(slug: String?, size: Int, articleId: String): List<CommentItemData> {
         val data = network.commentsData.getOrElse(articleId) { mutableListOf() }
         return when {
             slug == null -> data.take(size)
-            size > 0 -> data.dropWhile { it.slug != slug }
-                .drop(1)
-                .take(size)
-
-            size < 0 -> data
-                .dropLastWhile { it.slug != slug }
-                .dropLast(1)
-                .takeLast(abs(size))
-
+            size > 0 -> data.dropWhile { it.slug != slug }.drop(1).take(size)
+            size < 0 -> data.dropLastWhile { it.slug != slug }.dropLast(1).takeLast(abs(size))
             else -> emptyList()
-        }.apply { sleep(500) }
+        }.apply { sleep(1500) }
     }
 
+    override fun sendMessage(articleId: String, text: String, answerToSlug: String?) {
+        network.sendMessage(
+            articleId,
+            text,
+            answerToSlug,
+            User("777", "John Doe", "https://i.ibb.co/C1n19hD/photo-2020-04-25-22-30-17.jpg")
+        )
+
+        articleCountsDao.incrementCommentsCount(articleId)
+    }
+
+    override fun loadAllComments(articleId: String, total: Int): CommentsDataFactory {
+        return CommentsDataFactory(
+            itemProvider = ::loadCommentsByRange,
+            articleId = articleId,
+            totalCount = total
+        )
+    }
 
     override fun decrementLike(articleId: String) {
         articleCountsDao.decrementLike(articleId)
@@ -121,12 +100,26 @@ object ArticleRepository : IArticleRepository {
         articleCountsDao.incrementLike(articleId)
     }
 
-    override fun sendMessage(articleId: String, comment: String, answerToSlug: String?) {
-        network.sendMessage(
-            articleId, comment, answerToSlug,
-            User("777", "John Doe", "https://skill-branch.ru/img/mail/bot/android-category.png")
-        )
-        articleCountsDao.incrementCommentsCount(articleId)
+    override fun fetchArticleContent(articleId: String) {
+        val content = network.loadArticleContent(articleId).apply { sleep(1500) }
+        articleContentDao.insert(content.toArticleContent())
+    }
+
+    override fun findArticleCommentCount(articleId: String): LiveData<Int> {
+        return articleCountsDao.getCommentsCount(articleId)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    fun setupTestDao(
+        articlesDao: ArticlesDao,
+        articleCountsDao: ArticleCountsDao,
+        articleContentDao: ArticleContentsDao,
+        articlePersonalDao: ArticlePersonalInfosDao
+    ) {
+        this.articlesDao = articlesDao
+        this.articleContentDao = articleContentDao
+        this.articleCountsDao = articleCountsDao
+        this.articlePersonalDao = articlePersonalDao
     }
 }
 
@@ -135,26 +128,22 @@ class CommentsDataFactory(
     private val articleId: String,
     private val totalCount: Int
 ) : DataSource.Factory<String?, CommentItemData>() {
-    override fun create(): DataSource<String?, CommentItemData> =
-        CommentDataSource(itemProvider, articleId, totalCount)
+    override fun create(): DataSource<String?, CommentItemData> {
+        return CommentsDataSource(itemProvider, articleId, totalCount)
+    }
 }
 
-class CommentDataSource(
+class CommentsDataSource(
     private val itemProvider: (String?, Int, String) -> List<CommentItemData>,
     private val articleId: String,
     private val totalCount: Int
-) : ItemKeyedDataSource<String, CommentItemData>() {
-
+): ItemKeyedDataSource<String, CommentItemData>() {
     override fun loadInitial(
         params: LoadInitialParams<String>,
         callback: LoadInitialCallback<CommentItemData>
     ) {
         val result = itemProvider(params.requestedInitialKey, params.requestedLoadSize, articleId)
-        callback.onResult(
-            if (totalCount > 0) result else emptyList(),
-            0,
-            totalCount
-        )
+        callback.onResult(if (totalCount > 0) result else emptyList(), 0, totalCount)
     }
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<CommentItemData>) {
@@ -166,7 +155,6 @@ class CommentDataSource(
         val result = itemProvider(params.key, -params.requestedLoadSize, articleId)
         callback.onResult(result)
     }
-
 
     override fun getKey(item: CommentItemData): String = item.slug
 }
