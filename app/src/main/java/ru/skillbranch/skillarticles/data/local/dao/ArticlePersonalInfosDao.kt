@@ -27,7 +27,7 @@ interface ArticlePersonalInfosDao : BaseDao<ArticlePersonalInfo> {
 
     @Query(
         """
-        UPDATE article_personal_infos SET is_bookmark = NOT is_like, update_at = CURRENT_TIMESTAMP
+        UPDATE article_personal_infos SET is_bookmark = NOT is_bookmark, update_at = CURRENT_TIMESTAMP
         WHERE article_id =:articleId
     """
     )
@@ -45,7 +45,7 @@ interface ArticlePersonalInfosDao : BaseDao<ArticlePersonalInfo> {
 
     @Transaction
     fun toggleLikeOrInsert(articleId: String){
-        if (toggleBookmark(articleId) == 0) insert(
+        if (toggleLike(articleId) == 0) insert(
             ArticlePersonalInfo(
                 articleId = articleId,
                 isLike = true
