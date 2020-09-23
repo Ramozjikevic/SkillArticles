@@ -2,7 +2,6 @@ package ru.skillbranch.skillarticles.data.repositories
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
 import ru.skillbranch.skillarticles.data.*
@@ -23,7 +22,7 @@ interface IArticleRepository {
     fun getAppSettings(): LiveData<AppSettings>
     fun toggleLike(articleId: String)
     fun toggleBookmark(articleId: String)
-    fun isAuth(): MutableLiveData<Boolean>
+    fun isAuth(): LiveData<Boolean>
     fun loadCommentsByRange(slug: String?, size: Int, articleId: String) : List<CommentItemData>
     fun sendMessage(articleId: String, text: String, answerToSlug: String?)
     fun loadAllComments(articleId: String, total: Int): CommentsDataFactory
@@ -47,7 +46,7 @@ object ArticleRepository : IArticleRepository {
         return articlesDao.findFullArticle(articleId)
     }
 
-    override fun getAppSettings(): LiveData<AppSettings> = preferences.getAppSettings()
+    override fun getAppSettings(): LiveData<AppSettings> = preferences.appSettings
 
     override fun toggleLike(articleId: String) {
         articlePersonalDao.toggleLikeOrInsert(articleId)
@@ -57,7 +56,7 @@ object ArticleRepository : IArticleRepository {
         articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
-    override fun isAuth(): MutableLiveData<Boolean> = preferences.isAuth()
+    override fun isAuth(): LiveData<Boolean> = preferences.isAuth()
 
     override fun updateSettings(settings: AppSettings) {
         preferences.updateSettings(settings)
