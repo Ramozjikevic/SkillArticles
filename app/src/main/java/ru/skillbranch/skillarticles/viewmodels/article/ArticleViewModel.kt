@@ -167,7 +167,7 @@ class ArticleViewModel(
         if (!currentState.isAuth) {
             navigate(NavigationCommand.StartLogin())
         } else {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.sendMessage(
                     articleId,
                     currentState.commentText!!,
