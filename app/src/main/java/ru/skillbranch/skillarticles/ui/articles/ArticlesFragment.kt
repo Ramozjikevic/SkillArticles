@@ -52,7 +52,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             MenuItemHolder(
                 "Filter",
                 R.id.action_filter,
-                R.drawable.ic_search_black_24dp,
+                R.drawable.ic_filter_list_black_24dp,
                 null
             ) {
                 val action = ArticlesFragmentDirections.choseCategory(
