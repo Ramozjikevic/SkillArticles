@@ -27,9 +27,10 @@ object PrefManager {
     val appSettings = MediatorLiveData<AppSettings>().apply {
         value = AppSettings()
 
-        addSource(isDarkModeLive) {
+        // fix next branch
+    /*    addSource(isDarkModeLive) {
             value = value!!.copy(isDarkMode = it)
-        }
+        }*/
         addSource(isBigTextLive) {
             value = value!!.copy(isBigText = it)
         }
